@@ -1,0 +1,11 @@
+{
+  "name": "es-github-stats",
+  "version": "1.0.0",
+  "description": "Import git history into elasticsearch",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@elastic/elasticsearch": "^8.14.0"
+  }
+}
