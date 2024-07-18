@@ -1,0 +1,8 @@
+node_modules
+temp
+.dockerignore
+.gitignore
+compose.yaml
+Dockerfile
+README.md
+search.js

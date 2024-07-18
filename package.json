@@ -5,7 +5,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "module",
   "dependencies": {
-    "@elastic/elasticsearch": "^8.14.0"
+    "@elastic/elasticsearch": "^8.14.0",
+    "url-slug": "^4.0.1"
   }
 }

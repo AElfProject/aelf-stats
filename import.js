@@ -1,17 +1,29 @@
 "use strict";
 
-const fs = require("fs");
+import { convert } from "url-slug";
+import { readFileSync } from "fs";
 
-const { Client } = require("@elastic/elasticsearch");
+import { Client } from "@elastic/elasticsearch";
 const client = new Client({
-  node: "http://localhost:9200",
-  auth: { username: "elastic", password: "elastic" },
+  node: process.env.ELASTICSEARCH_NODE || "http://localhost:9200",
 });
 
+const REPO = process.env.REPO;
+
+if (!REPO) {
+  throw new Error(`Environment variable REPO not set.`);
+}
+
+const INDEX = convert(REPO);
+
 async function run() {
+  await client.indices.delete({
+    index: INDEX,
+    ignore_unavailable: true,
+  });
   await client.indices.create(
     {
-      index: "commits",
+      index: INDEX,
       operations: {
         mappings: {
           properties: {
@@ -24,6 +36,22 @@ async function run() {
             commit_by_email: "string",
             commit_by_date: "date",
             message: "string",
+            stats: {
+              type: "nested",
+              properties: {
+                files_changed: "number",
+                insertions: "number",
+                deletions: "number",
+                files: "string",
+                file_stats: {
+                  type: "nested",
+                  properties: {
+                    name: "string",
+                    lines_changed: "number",
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -31,7 +59,7 @@ async function run() {
     { ignore: [400] }
   );
 
-  const data = fs.readFileSync("temp/history.json", "utf8");
+  const data = readFileSync("temp/history.json", "utf8");
   const jsonData = JSON.parse(data);
 
   const dataset = jsonData.map((i) => ({
@@ -41,7 +69,7 @@ async function run() {
   }));
 
   const operations = dataset.flatMap((doc) => [
-    { index: { _index: "commits" } },
+    { index: { _index: INDEX } },
     doc,
   ]);
 
@@ -69,7 +97,7 @@ async function run() {
     console.log(erroredDocuments);
   }
 
-  const count = await client.count({ index: "commits" });
+  const count = await client.count({ index: INDEX });
   console.log(count);
 }
 
