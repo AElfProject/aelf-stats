@@ -19,7 +19,7 @@ services:
     ports:
       - 3000:3000
   githubstats:
-    image: githubstats
+    build: .
     environment:
       - REPO=AElfProject/AElf
       - ELASTICSEARCH_NODE=http://elasticsearch:9200
