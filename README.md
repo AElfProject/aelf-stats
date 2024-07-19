@@ -63,5 +63,4 @@ If you encounter a bug or have a feature request, please use the [Issue Tracker]
 
 ## License
 
-Distributed under the Apache License. See [License](LICENSE) for more information.
 Distributed under the MIT License. See [License](LICENSE) for more information.
